@@ -1,0 +1,87 @@
+
+// Program: ON Trade Joker Levels
+// Developer's Site: forexroboteasy.com
+// Development: Forex Robot Easy Team
+
+// Include necessary libraries
+#include <Trade\Trade.mqh>
+#include <Trade\PositionInfo.mqh>
+
+// Define the symbol and timeframe for trading
+string symbol = 'EURUSD';
+ENUM_TIMEFRAMES timeframe = PERIOD_H1;
+
+// Define the numerology key numbers for support and resistance levels
+double keyNumber1 = 7.0;
+double keyNumber2 = 11.0;
+double keyNumber3 = 22.0;
+
+// Define the Trade Joker indicator function
+void TradeJoker()
+{
+   // Get the current price
+   double currentPrice = SymbolInfoDouble(symbol, SYMBOL_BID);
+
+   // Calculate the support and resistance levels based on numerology key numbers
+   double supportLevel = currentPrice - keyNumber1;
+   double resistanceLevel = currentPrice + keyNumber2;
+
+   // Print the support and resistance levels
+   Print('Support Level: ', supportLevel);
+   Print('Resistance Level: ', resistanceLevel);
+
+   // Place trades based on the support and resistance levels
+   if(currentPrice < supportLevel)
+   {
+      // Open a buy position
+      double lotSize = 0.01;
+      double stopLoss = supportLevel - keyNumber3;
+      double takeProfit = resistanceLevel + keyNumber3;
+      Trade.PositionOpen(symbol, TRADE_ACTION_DEAL, TRADE_VOLUME_LOT, lotSize, currentPrice, stopLoss, takeProfit);
+   }
+   else if(currentPrice > resistanceLevel)
+   {
+      // Open a sell position
+      double lotSize = 0.01;
+      double stopLoss = resistanceLevel + keyNumber3;
+      double takeProfit = supportLevel - keyNumber3;
+      Trade.PositionOpen(symbol, TRADE_ACTION_DEAL, TRADE_VOLUME_LOT, lotSize, currentPrice, stopLoss, takeProfit);
+   }
+}
+
+// Define the entry point of the program
+int OnInit()
+{
+   // Initialize the trade functions
+   Trade.Initialize();
+
+   // Set the trading context
+   Trade.SetSymbol(symbol);
+   Trade.SetExpertMagicNumber(123456);
+
+   // Set the Trade Joker indicator on the chart
+   ChartIndicatorAdd(0, iCustom(NULL, 0, 'TradeJoker'));
+
+   return(INIT_SUCCEEDED);
+}
+
+// Define the main program loop
+void OnTick()
+{
+   // Call the Trade Joker indicator function
+   TradeJoker();
+}
+
+// Define the program termination function
+void OnDeinit(const int reason)
+{
+   // Finalize the trade functions
+   Trade.Deinitialize();
+}
+
+// Define the program entry point
+void OnStart()
+{
+   // Start the program execution
+   EventSetTimer(1);
+}
